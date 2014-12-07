@@ -1,0 +1,7 @@
+
+		</script>
+	</head>
+	<body onload="__init();">
+		<canvas id="__game" style="position:absolute; top:0; left:0;"></canvas>
+	</body>
+</html>

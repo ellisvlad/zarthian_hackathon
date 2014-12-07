@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+<link rel="stylesheet" href="css/editor.css"/>
+<script src="//cdnjs.cloudflare.com/ajax/libs/json2/20121008/json2.min.js"></script>
+<script src="js/editor/main.js"></script>
+<script src="js/editor/project.js"></script>
+<script src="js/editor/menu.js"></script>
+<script src="js/editor/compiler.js"></script>
+</head>
+<body>
+
+<pageContent>
+	<menuBar>
+		<menuButton menu="file">File</menuButton>
+		<menuButton menu="code">Code</menuButton>
+		<menuButton menu="run">Run</menuButton>
+		<menuButton menu="debug">Debug</menuButton>
+		<menuButton menu="team">Team</menuButton>
+		<menuButton menu="logout" last>Log Out</menuButton>
+		<menuButton menu="trash" last>TRASH</menuButton>
+	</menuBar>
+	
+	<mainArea>
+		<panes>
+			<pane pane_name="instances" pane_width="10%" pane_height="100%" addX>
+				<header>Instances</header>
+				<selectionList id="instancesList" name="Instances">
+				</selectionList>
+			</pane>
+			<pane pane_name="objects" pane_width="15%" pane_height="100%" addX>
+				<header>Objects <a href="#" onmousedown="newObject();">+</a></header>
+				<selectionList id="objectsList" name="Objects">
+				</selectionList>
+			</pane>
+			<pane pane_name="actionsList" pane_width="35%" pane_height="100%" addX>
+				<header>Actions</header>
+				<selectionList id="actionsList" name="Actions">
+				</selectionList>
+			</pane>
+			<pane pane_name="actionsSelect" pane_width="40%" pane_height="60%" addY>
+				<header>Action Selection</header>
+			</pane>
+			<pane pane_name="collab" pane_width="40%" pane_height="40%">
+				<header>Collaboration</header>
+			</pane>
+		</panes>
+	</mainArea>
+	
+	<borders></borders>
+	
+	<selectionList mouseList></selectionList>
+	<selectionList id="trashList" name="trash"></selectionList>
+	<mouseDropDownMenu></mouseDropDownMenu>
+	
+	<popup>
+		<overlay></overlay>
+		<box id="overlayBox"></box>
+	</popup>
+	
+	<form id="compileSubmition" method="post" action="compile.php" target="s"></form>
+</pageContent>
+
+<script>load();</script>
+
+</body>
+</html>

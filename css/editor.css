@@ -1,0 +1,213 @@
+body {
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+pageContent {
+	position:absolute;
+	left:0px; top:0px;
+	width:100%; height:100%;
+	padding:0;
+	margin:0;
+	overflow:hidden;
+	background:#FFF;
+	-webkit-user-select: none;
+	font-family: Helvetica, Arial, sans-serif;
+}
+
+menuBar {
+	position:absolute;
+	left:0px; top:0px;
+	width:100%; height:32px;
+	background:#333;
+}
+menuBar menuButton {
+	color:white;
+	font-size:14px;
+	padding:8px 20px;
+	position:relative;
+	top:7px;
+	cursor:pointer;
+}
+menuBar menuButton:HOVER {
+	background:#222;
+	text-decoration:underline;
+}
+menuBar menuButton[last] {
+	float:right;
+	top:0px;
+}
+
+mainArea {
+	background-color:white; /*#111;*/
+	position:absolute;
+	left:0px; top:32px;
+	width:100%; height:calc(100% - 32px);
+}
+
+panes pane {
+	background-color:#EEE;
+	border-right:2px solid #DDD;
+	border-bottom:2px solid #DDD;
+	position:absolute;
+	left:0px; top:0px;
+}
+panes pane header {
+	padding:4px;
+	color:white;
+	background-image: linear-gradient(#7BF,#9CF);
+	border-bottom:2px solid #BDF;
+	height:16px;
+}
+panes pane iframe {
+	width:100%; height:100%;
+	border:0;
+}
+panes paneSplitter {
+	background-color:rgba(0,0,0,0);
+	position:absolute;
+	left:0px; top:0px;
+	width:4px; height:100%;
+	cursor:e-resize;
+	z-index:1;
+}
+panes paneSplitter:hover {
+	background-color:#DDD;
+}
+
+selectionList {
+	width:100%; height:100%;
+	display:block;
+}
+selectionList[mouseList] {
+	height:auto;
+}
+selectionList item {
+	background-color:#DDD;
+	display:block;
+	padding:4px 4px 4px 24px;
+}
+selectionList item:hover {
+	background-color:#CCC;
+	cursor:pointer;
+}
+selectionList item[selected] {
+	background-color:#BBB;
+	text-decoration:underline;
+}
+selectionList item[object] {
+	text-decoration:underline;
+}
+selectionList item itemSep {
+	display:block;
+	margin:10px 0;
+}
+selectionList itemRegion {
+	color:#355;
+	font-weight:900;
+}
+selectionList itemRegion minimise {
+	display:inline-block;
+	padding-right:5px;
+}
+selectionList itemRegion minimise a {
+	color:#00F;
+	text-decoration:none;
+}
+selectionList content {
+	width:calc(100% - 85px);
+	padding-right:20px;
+	overflow:hidden;
+}
+selectionList selectPad {
+	background-color:#DDD;
+	display:block;
+	padding:4px 4px 4px 24px;
+	height:18px;
+}
+selectionList mover {
+	background-color:red;
+	float:right;
+	padding:8px;
+	cursor:n-resize;
+}
+
+mouseDropDownMenu {
+	position:absolute;
+	left:100px; top:100px;
+	background-color:#222;
+	color:#FFF;
+}
+mouseDropDownMenu dropDownEl {
+	display:block;
+	padding:2px 40px 2px 2px;
+	border-bottom:solid 1px #444;
+	cursor:pointer;
+}
+mouseDropDownMenu dropDownEl:hover {
+	background-color:#444;
+}
+
+border {
+	position:absolute;
+	top:32px;
+	background-color:red;
+}
+border[x] {
+	width:100%; height:4px;
+	cursor:n-resize;
+}
+border[y] {
+	width:4px; height:100%;
+	cursor:e-resize;
+}
+
+action {
+	display:inline-block;
+	background-color:red;
+	width:32px; height:32px;
+	margin:4px;
+	cursor:move;
+}
+
+img[moveable] {
+	cursor:move;
+}
+
+popup {
+	display:none;
+	position:absolute;
+	left:0px; top:32px;
+	width:100%; height:calc(100% - 32px);
+}
+popup overlay {
+	display:block;
+	position:absolute;
+	background-color:rgba(0,0,0,0.6);
+	left:0px; top:0px;
+	width:100%; height:100%;
+}
+popup box {
+	display:block;
+	position:absolute;
+	background-color:#FFF;
+	left:calc(50% - 250px); top:50px;
+	width:500px; height:600px;
+}
+popup box img {
+	float:left;
+	position:relative;
+	top:20px;
+	padding:0 20px;
+}
+popup box h1 {
+	float:left;
+}
+popup box div {
+	clear:both;
+	width:350px;
+	margin:0 auto;
+}
+popup box div table {
+	width:100%;
+}
+
