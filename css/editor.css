@@ -77,6 +77,7 @@ panes paneSplitter:hover {
 selectionList {
 	width:100%; height:100%;
 	display:block;
+	overflow-y:auto;
 }
 selectionList[mouseList] {
 	height:auto;
@@ -104,6 +105,10 @@ selectionList item itemSep {
 selectionList itemRegion {
 	color:#355;
 	font-weight:900;
+}
+selectionList itemRegion addKey {
+	display:inline-block;
+	padding-left:5px;
 }
 selectionList itemRegion minimise {
 	display:inline-block;
@@ -154,11 +159,11 @@ border {
 }
 border[x] {
 	width:100%; height:4px;
-	cursor:n-resize;
+	/*cursor:n-resize;*/
 }
 border[y] {
 	width:4px; height:100%;
-	cursor:e-resize;
+	/*cursor:e-resize;*/
 }
 
 action {
@@ -190,8 +195,14 @@ popup box {
 	display:block;
 	position:absolute;
 	background-color:#FFF;
-	left:calc(50% - 250px); top:50px;
+	left:calc(50% - 250px); top:32px;
 	width:500px; height:600px;
+	padding:6px;
+}
+popup box[popups] {
+	left:60%; top:0px;
+	width:35%; height:320px;
+	padding:6px;
 }
 popup box img {
 	float:left;
@@ -208,6 +219,23 @@ popup box div {
 	margin:0 auto;
 }
 popup box div table {
+	width:100%;
+}
+
+chat chatHistory {
+	background-color:#555;
+	color:#FFF;
+	display:block;
+	position:relative;
+	left:4px; top:0;
+	width:100%; height:calc(100% - 48px);
+}
+chat input {
+	background-color:#555;
+	color:#FFF;
+	display:block;
+	position:relative;
+	left:4px; top:0;
 	width:100%;
 }
 

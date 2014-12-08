@@ -46,20 +46,12 @@ function makePanes() {
 
 	panes=document.getElementsByTagName("pane");
 	for (i=0; i!=panes.length; i++) {
-		panes[i].style.left=offsetX+"px";
-		if (panes[i].getAttribute("pane_width").indexOf("%")!=-1)
-			widthPixels=window.innerWidth/100*parseInt(panes[i].getAttribute("pane_width"))-3;
-		else
-			widthPixels=parseInt(panes[i].getAttribute("pane_width"))-3;
-		panes[i].style.width=widthPixels+"px";
-		if (panes[i].getAttribute("addX")!=null) offsetX+=widthPixels+3;
-		panes[i].style.top=offsetY+"px";
-		if (panes[i].getAttribute("pane_height").indexOf("%")!=-1)
-			heightPixels=(window.innerHeight-32)/100*parseInt(panes[i].getAttribute("pane_height"))-3;
-		else
-			heightPixels=parseInt(panes[i].getAttribute("pane_height"))-3;
-		if (panes[i].getAttribute("addY")!=null) offsetY+=heightPixels+3;
-		panes[i].style.height=heightPixels+"px";
+		panes[i].style.left=offsetX+"%";
+		panes[i].style.top=offsetY+"%";
+		panes[i].style.width=panes[i].getAttribute("pane_width");
+		panes[i].style.height=panes[i].getAttribute("pane_height");
+		if (panes[i].getAttribute("addX")!=null) offsetX+=parseInt(panes[i].getAttribute("pane_width"));
+		if (panes[i].getAttribute("addY")!=null) offsetY+=parseInt(panes[i].getAttribute("pane_height"));
 	}
 }
 
@@ -98,13 +90,30 @@ function checkListsScroll() {
 	}
 }
 
-function newObject() {
+function newObjectDialog() {
+	document.getElementsByTagName("popup")[0].style.display="block";
+	var box=document.getElementById("overlayBox");
+	box.innerHTML="<h1>New Object</h2><div>"+
+	"<table>"+
+	"<tr><td>Object Name:</td><td><input type='text'></td></tr>"+
+	"</table>";
+	closeOverlay=function(){
+		inputs=document.getElementsByTagName("popup")[0].children[1].getElementsByTagName("input");
+		newObject(inputs[0].value);
+		collab_send(0, inputs[0].value);
+	};
+}
+
+function newObject(name) {
 	projectData.objects.push({
-		name:"TEST",
+		name:name,
 		actionTopics:{
 			Create:[],
 			Draw:[],
-			KeyPress:[]
+			KeyPress:[{
+				action:"keyPress",
+				keys:{}
+			}]
 		}
 	});
 	
@@ -199,35 +208,37 @@ function makeMovable(item) {
 		case "prompt":
 			box.innerHTML="<img src='img/prompt.png'/><h1>Editing Prompt Box</h2><div>"+
 			"<table>"+
-			"<tr><td>Question:</td><td><input type='text' value="+elData.question+"></td></tr>"+
-			"<tr><td>Default Text:</td><td><input type='text' value="+elData.defaultText+"></td></tr>"+
-			"<tr><td>Store Variable:</td><td><input type='text' value="+elData.answer+"></td></tr>"+
+			"<tr><td>Question:</td><td><input type='text' value='"+elData.question+"'></td></tr>"+
+			"<tr><td>Default Text:</td><td><input type='text' value='"+elData.defaultText+"'></td></tr>"+
+			"<tr><td>Store Variable:</td><td><input type='text' value='"+elData.answer+"'></td></tr>"+
 			"</table>";
 			closeOverlay=function(actData, item){return function(){
 				inputs=document.getElementsByTagName("popup")[0].children[1].getElementsByTagName("input");
-				actData.question='"'+inputs[0].value+'"';
-				actData.defaultText='"'+inputs[1].value+'"';
+				actData.question=inputs[0].value;
+				actData.defaultText=inputs[1].value;
 				actData.answer=inputs[2].value;
 				item.children[0].innerHTML=makeActionText(actData, item);
+				makeMovable(item);
 			}}(elData, item);
 		break;
 		case "alert":
 			box.innerHTML="<img src='img/message.png'/><h1>Editing Message Box</h2><div>"+
 			"<table>"+
-			"<tr><td>Text:</td><td><input type='text' value="+elData.text+"></td></tr>"+
+			"<tr><td>Text:</td><td><input type='text' value='"+elData.text+"'></td></tr>"+
 			"</table>";
 			closeOverlay=function(actData, item){return function(){
 				inputs=document.getElementsByTagName("popup")[0].children[1].getElementsByTagName("input");
-				actData.text='"'+inputs[0].value+'"';
+				actData.text=inputs[0].value;
 				item.children[0].innerHTML=makeActionText(actData, item);
+				makeMovable(item);
 			}}(elData, item);
 		break;
 		case "text_properties":
 			box.innerHTML="<img src='img/prompt.png'/><h1>Editing Text Properties</h2><div>"+
 			"<table>"+
-			"<tr><td>Color:</td><td><input type='text' value="+elData.color+"></td></tr>"+
-			"<tr><td>Font:</td><td><input type='text' value="+elData.font+"></td></tr>"+
-			"<tr><td>Size:</td><td><input type='text' value="+elData.size+"></td></tr>"+
+			"<tr><td>Color:</td><td><input type='text' value='"+elData.color+"'></td></tr>"+
+			"<tr><td>Font:</td><td><input type='text' value='"+elData.font+"'></td></tr>"+
+			"<tr><td>Size:</td><td><input type='text' value='"+elData.size+"'></td></tr>"+
 			"</table>";
 			closeOverlay=function(actData, item){return function(){
 				inputs=document.getElementsByTagName("popup")[0].children[1].getElementsByTagName("input");
@@ -235,53 +246,68 @@ function makeMovable(item) {
 				actData.font=inputs[1].value;
 				actData.size=inputs[2].value;
 				item.children[0].innerHTML=makeActionText(actData, item);
+				makeMovable(item);
 			}}(elData, item);
-		break;//TODO They find me...
+		break;
 		case "draw_text":
 			box.innerHTML="<img src='img/prompt.png'/><h1>Editing Draw Text</h2><div>"+
 			"<table>"+
-			"<tr><td>Text:</td><td><input type='text' value="+elData.text+"></td></tr>"+
-			"<tr><td>x:</td><td><input type='text' value="+elData.x+"></td></tr>"+
-			"<tr><td>y:</td><td><input type='text' value="+elData.y+"></td></tr>"+
+			"<tr><td>Text:</td><td><input type='text' value='"+elData.text+"'></td></tr>"+
+			"<tr><td>x:</td><td><input type='text' value='"+elData.x+"'></td></tr>"+
+			"<tr><td>y:</td><td><input type='text' value='"+elData.y+"'></td></tr>"+
 			"</table>";
 			closeOverlay=function(actData, item){return function(){
 				inputs=document.getElementsByTagName("popup")[0].children[1].getElementsByTagName("input");
-				actData.text='"'+inputs[0].value+'"';
-				actData.x=+inputs[1].value;
+				actData.text=inputs[0].value;
+				actData.x=inputs[1].value;
 				actData.y=inputs[2].value;
 				item.children[0].innerHTML=makeActionText(actData, item);
+				makeMovable(item);
 			}}(elData, item);
 		break;
 		case "var":
 			box.innerHTML="<img src='img/prompt.png'/><h1>Editing Variable Assignment</h2><div>"+
 			"<table>"+
-			"<tr><td>Variable:</td><td><input type='text' value="+elData.variable+"></td></tr>"+
-			"<tr><td>Value:</td><td><input type='text' value="+elData.value+"></td></tr>"+
+			"<tr><td>Variable:</td><td><input type='text' value='"+elData.variable+"'></td></tr>"+
+			"<tr><td>Value:</td><td><input type='text' value='"+elData.value+"'></td></tr>"+
 			"</table>";
 			closeOverlay=function(actData, item){return function(){
 				inputs=document.getElementsByTagName("popup")[0].children[1].getElementsByTagName("input");
 				actData.variable=inputs[0].value;
 				actData.value=inputs[1].value;
 				item.children[0].innerHTML=makeActionText(actData, item);
+				makeMovable(item);
 			}}(elData, item);
 		break;
-		case "keyPress":
-			retStr="";
-			for (keyAction in action.keys) {
-				retStr+="<itemregion data='keyPress"+keyAction+"'>"+keyAction+"</itemregion><selectionlist id='innerlist_"+makeInnerLists.length+"' name='Action_Section_KeyPress"+keyAction+"'>";
-				for (keyActions in action.keys[keyAction]) {
-					retStr+="<item moveTo='Action_Section_*'><content>"+makeActionText(action.keys[keyAction][keyActions], null)+"</content></item>";
-				}
-				retStr+="</selectionlist>";
-				item.setAttributeNode(document.createAttribute("embedded"));
-				makeInnerLists.push("innerlist_"+makeInnerLists.length);
-			}
-		break;
 		case "load_image":
-			retStr="<img src='img/load_img.png'/><itemSep></itemSep>"+action.imgId+" = "+action.src;
+			box.innerHTML="<img src='img/load_img.png'/><h1>Editing Image Load</h2><div>"+
+			"<table>"+
+			"<tr><td>Image Src:</td><td><input type='text' value='"+elData.src+"'></td></tr>"+
+			"<tr><td>Image ID:</td><td><input type='text' value='"+elData.imgId+"'></td></tr>"+
+			"</table>";
+			closeOverlay=function(actData, item){return function(){
+				inputs=document.getElementsByTagName("popup")[0].children[1].getElementsByTagName("input");
+				actData.src=inputs[0].value;
+				actData.imgId=inputs[1].value;
+				item.children[0].innerHTML=makeActionText(actData, item);
+				makeMovable(item);
+			}}(elData, item);
 		break;
 		case "draw_image":
-			retStr="<img src='img/draw_img.png'/><itemSep></itemSep>"+action.imgId+" at ["+action.x+","+action.y+"]";
+			box.innerHTML="<img src='img/draw_img.png'/><h1>Editing Image Draw</h2><div>"+
+			"<table>"+
+			"<tr><td>Image ID:</td><td><input type='text' value='"+elData.imgId+"'></td></tr>"+
+			"<tr><td>x:</td><td><input type='text' value='"+elData.x+"'></td></tr>"+
+			"<tr><td>y:</td><td><input type='text' value='"+elData.y+"'></td></tr>"+
+			"</table>";
+			closeOverlay=function(actData, item){return function(){
+				inputs=document.getElementsByTagName("popup")[0].children[1].getElementsByTagName("input");
+				actData.imgId=inputs[0].value;
+				actData.x=inputs[1].value;
+				actData.y=inputs[2].value;
+				item.children[0].innerHTML=makeActionText(actData, item);
+				makeMovable(item);
+			}}(elData, item);
 		break;
 		default:
 			console.error("==========");
@@ -421,6 +447,7 @@ function releaseMouse() {
 		
 		listMovingEl=null;
 		mouseList.style.display="none";
+		collab_send(1, projectData);
 	}
 }
 
@@ -480,11 +507,11 @@ function initActionSelection() {
 		actionsList[i].onmousedown=function(action) {return function() {
 			canMoveListElTo="Action_Section_*";
 			listMoving=null;
-			newElementData=action;
+			newElementData=JSON.parse(JSON.stringify(action));
 			
 			item=document.createElement("item");
 			content=document.createElement("content");
-			content.innerHTML=makeActionText(action, item);
+			content.innerHTML=makeActionText(newElementData, item);
 			item.appendChild(content);
 			makeMovable(item);
 			item.setAttribute("moveTo", "Action_Section_*");
@@ -504,27 +531,25 @@ function remakeBorders() {
 	borders=document.getElementsByTagName("borders")[0];
 	panes=document.getElementsByTagName("panes")[0].children;
 	
-	var x=0, y=32;
+	var x=0, y=0;
 
 	for (i=0; i!=3; i++) {
 		item=document.createElement("border");
 		item.setAttributeNode(document.createAttribute("y"));
 		item.setAttribute("paneId", i);
-		item.onmousedown=function(){movingEl=this;};
+		//item.onmousedown=function(){movingEl=this;};
 		x+=parseInt(panes[i].style.width);
-		item.style.left=x+"px";
-		x+=4;
+		item.style.left=x+"%";
 		borders.appendChild(item);
 	}
 	for (i=3; i!=4; i++) {
 		item=document.createElement("border");
 		item.setAttributeNode(document.createAttribute("x"));
 		item.setAttribute("paneId", i);
-		item.onmousedown=function(){movingEl=this;};
+		//item.onmousedown=function(){movingEl=this;};
 		y+=parseInt(panes[i].style.height);
-		item.style.left=x+"px";
-		item.style.top=y+"px";
-		y+=4;
+		item.style.left=x+"%";
+		item.style.top="calc("+y+"% + 12px)";
 		borders.appendChild(item);
 	}
 }
@@ -678,6 +703,7 @@ function load() {
 	document.getElementsByTagName("popup")[0].children[0].onmousedown=function() {
 		document.getElementsByTagName("popup")[0].style.display="none";
 		closeOverlay();
+		collab_send(1, projectData);
 	}
 
 	trash=document.getElementById("trashList");
@@ -690,6 +716,8 @@ function load() {
 			document.body.appendChild(mouseList);
 		}
 	}
+
+	document.getElementById("chatHistory").innerHTML+=my_username+" has joined the session!<br>";
 	
 	setInterval(step, 30);
 }

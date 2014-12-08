@@ -69,11 +69,7 @@ function compile($data) {
 					//$compileOutput.="  	console.log(e.keyCode);\n";
 					$compileOutput.="  	switch (e.keyCode) {\n";
 					foreach ($elements[0]->keys as $key=>$keyEvents) {
-						$keyCode=0;
-						switch ($key) {
-							case "_LEFT": $keyCode=37; break;
-							case "_RIGHT": $keyCode=39; break;
-						}
+						$keyCode=$key;
 						$compileOutput.="  	case ".$keyCode.":\n";
 						$compileOutput=handleElements($keyEvents, $compileOutput);
 						$compileOutput.="  	break;\n";
@@ -144,8 +140,13 @@ if (isset($_POST['data'])) {
 	$data=json_decode($_POST['data']);
 	
 	//print_r($data); echo "\n\n\n\n";
-	
-	echo compile($data);
+
+	if (empty($_POST['final'])) {
+		echo compile($data);
+	} else {
+		file_put_contents("/var/www/runnables/".$_POST['pid'].".html", compile($data));
+		echo "<script>alert('Exported successfully!\\n\\nYou will now be taken to the export url'); document.location=document.location.origin+'/runnables/".$_POST['pid'].".html'</script>";
+	}
 	die();
 }
 ?>

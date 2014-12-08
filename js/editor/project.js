@@ -1,88 +1,35 @@
 projectData={
-	objects:[{
-		name:"Demo Object",
-		actionTopics:{
-			Create:[{
-				action:"prompt",
-				question:"\"What's your name?\"",
-				defaultText:"\"ellisvlad\"",
-				answer:"this.name"
-			},{
-				action:"alert",
-				text:"\"This is a demo :D\""
-			},{
-				action:"prompt",
-				question:"\"How old are you?\"",
-				defaultText:"\"18\"",
-				answer:"this.age"
-			}],
-			Draw:[{
-				action:"text_properties",
-				color:"White",
-				font:"Arial",
-				size:"24pt"
-			},{
-				action:"draw_text",
-				text:"\"Hi there \"+this.name+\"! You are \"+this.age+\" years old.\"",
-				x:"32",
-				y:"32"
-			}],
-			KeyPress:[]
-		}
-	},{
-		name:"Demo Object2",
-		actionTopics:{
-			Create:[{
-				action:"var",
-				variable:"x",
-				value:"32"
-			},{
-				action:"var",
-				variable:"y",
-				value:"32"
-			},{
-				action:"load_image",
-				src:"http://www.html5canvastutorials.com/demos/assets/darth-vader.jpg",
-				imgId:"playerImg"
-			}],
-			Draw:[{
-				action:"draw_image",
-				imgId:"playerImg",
-				x:"x",
-				y:"32"
-			},{
-				action:"text_properties",
-				color:"White",
-				font:"Arial",
-				size:"24pt"
-			},{
-				action:"draw_text",
-				text:"\"Use arrow keys to move!\"",
-				x:"16",
-				y:"20+4"
-			}],
-			KeyPress:[{
-				action:"keyPress",
-				keys:{
-					_LEFT:[{
-						action:"var",
-						variable:"x",
-						value:"x-1"
-					}],
-					_RIGHT:[{
-						action:"var",
-						variable:"x",
-						value:"x+1"
-					}]
-				}
-			}]
-		}
-	}],
+	objects:[],
 	instances:[]
-};
+}
+
+var http=new XMLHttpRequest();
+http.onreadystatechange=function() {
+	if (http.readyState==4&&http.status==200) {
+		hasChangedSinceSave=false;
+		projectData=JSON.parse(http.response);
+		reloadObjects();
+	}
+}
+http.open("POST", "loadProject.php", true);
+http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+http.send("pid=<?php echo $_SERVER['QUERY_STRING']; ?>");
 
 selectedObject=null;
 makeInnerLists=[];
+
+function ProjectImport(but) {
+	try {
+		console.log(but.parentNode.children[but.parentNode.children.length-2].value);
+		projectData1=JSON.parse(but.parentNode.children[but.parentNode.children.length-2].value);
+		projectData=projectData1;
+		document.getElementById("overlayBox").innerHTML+="<br style='clear:both;'><h1>Loaded!</h1>";
+		setTimeout(function(){document.getElementsByTagName("popup")[0].style.display="none";}, 2000);
+		collab_send(1, projectData);
+	} catch (e) {
+		document.getElementById('importText').innerHTML="<font style='color:red;'>Error when loading! "+e.message+"</font>";
+	}
+}
 
 function makeActionText(action, item) {
 	var retStr="?? "+action.action+" ??";
@@ -105,7 +52,22 @@ function makeActionText(action, item) {
 	case "keyPress":
 		retStr="";
 		for (keyAction in action.keys) {
-			retStr+="<itemregion data='keyPress"+keyAction+"'>"+keyAction+"</itemregion><selectionlist id='innerlist_"+makeInnerLists.length+"' name='Action_Section_KeyPress"+keyAction+"'>";
+			var keyStr=String.fromCharCode(keyAction);
+			if (parseInt(keyAction)<48) {
+				switch (parseInt(keyAction)) {
+				case 8: keyStr="Backspace"; break;
+				case 13: keyStr="Enter"; break;
+				case 16: keyStr="Shift"; break;
+				case 17: keyStr="Control"; break;
+				case 32: keyStr="Space"; break;
+				case 37: keyStr="Left"; break;
+				case 38: keyStr="Up"; break;
+				case 39: keyStr="Right"; break;
+				case 40: keyStr="Down"; break;
+				default: keyStr="Unknown key? ["+keyAction+"]";
+				}
+			}
+			retStr+="<itemregion data='keyPress"+keyAction+"'>"+keyStr+"</itemregion><selectionlist id='innerlist_"+makeInnerLists.length+"' name='Action_Section_KeyPress"+keyAction+"'>";
 			for (keyActions in action.keys[keyAction]) {
 				retStr+="<item moveTo='Action_Section_*'><content>"+makeActionText(action.keys[keyAction][keyActions], null)+"</content></item>";
 			}
@@ -161,6 +123,27 @@ function selectObject(id) {
 		minimise.appendChild(minimiseLink);
 		itemRegion.appendChild(minimise);
 		itemRegion.appendChild(document.createTextNode(keys[i]));
+		if (keys[i]=="KeyPress") {
+			addKey=document.createElement("addKey");
+			addKeyLink=document.createElement("a");
+			addKeyLink.href="#";
+			addKeyLink.text="[ADD]";
+			addKeyLink.onmousedown=function(selectedObject) {return function() {
+				document.getElementsByTagName("popup")[0].style.display="block";
+				var box=document.getElementById("overlayBox");
+				box.innerHTML="<h1>Adding Key Press Event</h2><div>"+
+				"<table>"+
+				"<tr><td>Key Code:</td><td><input type='text' onkeyup='this.value=event.keyCode;'></td></tr>"+
+				"</table>";
+				closeOverlay=function(actData, item){return function(){
+					inputs=document.getElementsByTagName("popup")[0].children[1].getElementsByTagName("input");
+					actData[inputs[0].value]=[];
+					selectObject(currentlyEditing);
+				}}(selectedObject.actionTopics.KeyPress[0].keys, itemGroup.children[1]);
+			}}(selectedObject);
+			addKey.appendChild(addKeyLink);
+			itemRegion.appendChild(addKey);
+		}
 		innerList.setAttribute("name", "Action_Section_"+keys[i]);
 		//innerList.style.display="none";
 		elements=selectedObject.actionTopics[keys[i]];
@@ -234,5 +217,3 @@ function reloadObjects() {
 	}
 	makeList(selArea);
 }
-
-setTimeout(function() {reloadObjects();}, 100);
