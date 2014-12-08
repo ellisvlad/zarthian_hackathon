@@ -6,3 +6,5 @@ So basically, the project is a simple to use game-making platform for beginners.
 <img src="http://i.ellisvlad.com/IY59k.png"/>
 <img src="http://i.ellisvlad.com/ssrVP.png"/>
 <img src="http://i.ellisvlad.com/1EvfS.png"/>
+##APIs used
+Just the awesome PubNub API
