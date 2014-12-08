@@ -4,7 +4,7 @@ var PUBNUB_session=PUBNUB.init({
 });
 
 PUBNUB_session.subscribe({
-	channel: 'session_0',
+	channel: 'session_<?php echo $_SERVER['QUERY_STRING']; ?>',
 	message: collab_recv
 });
 

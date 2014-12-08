@@ -25,7 +25,7 @@ try {
 <script src="js/editor/project.js?<?php echo $_SERVER['QUERY_STRING']; ?>"></script>
 <script src="js/editor/menu.js?<?php echo $_SERVER['QUERY_STRING']; ?>"></script>
 <script src="js/editor/compiler.js?<?php echo $_SERVER['QUERY_STRING']; ?>"></script>
-<script src="js/editor/collab.js"></script>
+<script src="js/editor/collab.js?<?php echo $_SERVER['QUERY_STRING']; ?>"></script>
 </head>
 <body>
 
